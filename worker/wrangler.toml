@@ -1,0 +1,22 @@
+name = "caju-wrapped"
+main = "src/index.ts"
+compatibility_date = "2026-07-01"
+workers_dev = false
+
+routes = [
+  { pattern = "wrapped-api.cajuos.dev", custom_domain = true }
+]
+
+[vars]
+ALLOWED_ORIGIN = "https://wrapped.cajuos.dev"
+
+# KV opcional (cache 7d + rate limit). Cria com:
+#   wrangler kv namespace create WRAPPED_CACHE
+# e descomenta abaixo. Sem KV o worker funciona sem cache/limit.
+# [[kv_namespaces]]
+# binding = "WRAPPED_CACHE"
+# id = "COLA_O_ID_AQUI"
+
+# Segredo (nunca commita): cria um PAT read-only em
+# github.com/settings/tokens (sem scopes, só dados públicos) e roda:
+#   wrangler secret put GITHUB_TOKEN
