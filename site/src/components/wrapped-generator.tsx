@@ -2,9 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const WORKER =
-  process.env.NEXT_PUBLIC_WORKER_URL ??
-  (process.env.NODE_ENV === "development" ? "http://localhost:8787" : "https://wrapped-api.cajuos.dev");
+// Sempre same-origin: /api/stats é rewrite → worker (único subdomínio público).
+const STATS_PATH = "/api/stats";
 const STORE_KEY = "cajuos:wrapped";
 
 type Theme = "dark" | "light" | "neon";
@@ -254,7 +253,7 @@ export function WrappedGenerator() {
     setStatus("loading");
     setError("");
     try {
-      const resp = await fetch(`${WORKER}/stats?u=${encodeURIComponent(u)}`);
+      const resp = await fetch(`${STATS_PATH}?u=${encodeURIComponent(u)}`);
       const json = (await resp.json()) as { ok: boolean; error?: string } & Stats;
       if (!json.ok) throw new Error(json.error ?? "unknown");
       setStats(json);

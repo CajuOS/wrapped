@@ -37,8 +37,20 @@ npm run dev
 
 ## Deploy
 
-- Worker: `cd worker && wrangler deploy` + DNS `wrapped-api.cajuos.dev` na Cloudflare
-- Site: push na main (auto-deploy Vercel) + domínio `wrapped.cajuos.dev`
+Um único subdomínio público: `wrapped.cajuos.dev` (Vercel). O worker não tem
+domínio próprio — o site faz proxy `/api/stats` → worker via rewrite.
+
+```bash
+cd worker
+wrangler secret put GITHUB_TOKEN   # PAT read-only, sem scopes
+# KV opcional: wrangler kv namespace create WRAPPED_CACHE (cola id, descomenta)
+wrangler deploy   # anota a URL https://caju-wrapped.<conta>.workers.dev
+```
+
+Na Vercel (importa `CajuOS/wrapped`, root `site/`):
+
+- Domínio: `wrapped.cajuos.dev` (+ DNS na Cloudflare, único registro)
+- Env `WRAPPED_API_URL` = URL workers.dev acima
 
 ## Licença
 

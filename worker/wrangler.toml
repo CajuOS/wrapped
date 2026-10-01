@@ -1,11 +1,10 @@
 name = "caju-wrapped"
 main = "src/index.ts"
 compatibility_date = "2026-07-01"
-workers_dev = false
 
-routes = [
-  { pattern = "wrapped-api.cajuos.dev", custom_domain = true }
-]
+# Sem custom domain de propósito: o único subdomínio público é
+# wrapped.cajuos.dev (Vercel). O site faz proxy /api/stats → cá
+# (rewrite no next.config.ts). A URL workers.dev nunca aparece.
 
 [vars]
 ALLOWED_ORIGIN = "https://wrapped.cajuos.dev"
