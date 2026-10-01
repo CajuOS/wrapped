@@ -62,7 +62,6 @@ interface Q1User {
   avatarUrl: string;
   createdAt: string;
   followers: { totalCount: number };
-  contributionYears: number[];
   repositories: {
     totalCount: number;
     nodes: { stargazerCount: number; primaryLanguage: { name: string } | null }[];
@@ -74,7 +73,6 @@ query($login: String!) {
   user(login: $login) {
     login name avatarUrl createdAt
     followers { totalCount }
-    contributionYears
     repositories(first: 100, ownerAffiliations: OWNER, orderBy: {field: STARGAZERS, direction: DESC}) {
       totalCount
       nodes { stargazerCount primaryLanguage { name } }
@@ -111,7 +109,11 @@ export async function wrappedStats(login: string, env: Env): Promise<{ stats: Wr
   const u = q1.user;
 
   // All-time = soma das collections anuais (default da API seria só 365 dias).
-  const years = u.contributionYears.filter((y) => y >= 2008 && y <= 2100).slice(0, 30);
+  // Anos = desde a criação da conta até hoje (anos zerados retornam 0, sem custo extra).
+  const nowYear = new Date().getFullYear();
+  const joinYear = Math.max(2008, new Date(u.createdAt).getFullYear());
+  const years: number[] = [];
+  for (let y = joinYear; y <= nowYear; y++) years.push(y);
   const totals = { commits: 0, prs: 0, issues: 0, reviews: 0 };
   if (years.length > 0) {
     const q2 = (await gh(env.GITHUB_TOKEN!, yearsQuery(years), { login })) as {
